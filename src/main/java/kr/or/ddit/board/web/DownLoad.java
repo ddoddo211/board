@@ -24,7 +24,7 @@ public class DownLoad extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
 		String fileName = request.getParameter("file_name"); //get으로 들어온 인자 받기
-	        String sDownloadPath = this.getServletContext().getRealPath("/brd");
+	        String sDownloadPath = this.getServletContext().getRealPath("/");
 	        String sFilePath = sDownloadPath + fileName;
 	        
 	        byte b[] = new byte[4096];
