@@ -22,8 +22,9 @@ public class DownLoad extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		 String fileName = request.getParameter("file_name"); //get으로 들어온 인자 받기
-	        String sDownloadPath = "C:\\A_TeachingMaterial\\6.JspSrpgin\\workspace\\board\\src\\main\\webapp\\";
+			
+		String fileName = request.getParameter("file_name"); //get으로 들어온 인자 받기
+	        String sDownloadPath = "/brd/";
 	        String sFilePath = sDownloadPath + fileName;
 	        
 	        byte b[] = new byte[4096];
