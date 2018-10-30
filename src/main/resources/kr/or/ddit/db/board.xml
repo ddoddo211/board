@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+	
+	<!-- 게시글 관련 -->
+	<select id="selectBoardAll" parameterType="brdVo" resultType="brdVo">
+		select * from
+	  	(select rownum rnum,a.* from
+		  	(select lpad('└▶',(level-1)*4,'　') || brd_title brd_rp,board.*, level
+ 			from board
+			where brd_brdt=#{brd_brdt}
+			start with brd_pid is null
+			connect by prior brd_id = brd_pid
+			order siblings by brd_gn desc) a)
+		where rnum between #{brd_page}*#{brd_pageSize}-(#{brd_pageSize}-1) and #{brd_page}*#{brd_pageSize}
+    
+	</select>
+	
+	<select id="selectBoard" parameterType="String" resultType="brdVo">
+		select * from board where brd_id=#{brd_id}
+	</select>
+	
+	<select id="countBoardAll" parameterType="String" resultType="int">
+		select count(*) from board where brd_brdt=#{brdt_id}
+	</select>
+	
+	<insert id="insertBoard" parameterType="brdVo">
+		insert into board 
+		values('brd'||board_sq.nextval,#{brd_title},#{brd_text},brd_gn_sq.nextval,#{brd_brdt},'',#{brd_user},1)
+	</insert>
+	
+	<insert id="insertReplyBoard" parameterType="brdVo">
+		insert into board 
+		values('brd'||board_sq.nextval,#{brd_title},#{brd_text},#{brd_gn},#{brd_brdt},#{brd_pid},#{brd_user},1)
+	</insert>
+	
+	<update id="updateBoard" parameterType="brdVo">
+		update board
+		set brd_title=#{brd_title}
+			,brd_text=#{brd_text}
+			,brd_del=#{brd_del}
+		where brd_id=#{brd_id}
+	</update>
+	
+	<select id="maxBoard" resultType="int">
+		select max(to_number(substr(brd_id,4))) from board
+	</select>
+	
+	
+	
+	
+	<!-- 댓글관련  -->
+	<select id="selectReplyAll" parameterType="String" resultType="rplVo">
+		select /*+INDEX(REPLY idx_reply_01)*/* from reply where rpl_brd=#{brd_id}
+	</select>
+	
+	<insert id="insertReply" parameterType="rplVo">
+		insert into reply values('rpl'||reply_sq.nextval,#{rpl_user},#{rpl_text},sysdate,#{rpl_brd})
+	</insert>
+	
+	<update id="deleteReply" parameterType="rplVo">
+		update reply
+		set rpl_text=#{rpl_text}
+			,rpl_user=#{rpl_user}
+		where rpl_id=#{rpl_id}
+	</update>
+	
+	
+	
+	
+	<!-- 첨부파일관련 -->
+	<select id="selectFileAll" parameterType="String" resultType="fileVo">
+		select /*+INDEX(ADDFILE idx_addfile_01)*/* from addfile
+		where file_brd=#{file_brd}
+	</select>
+	
+	<insert id="insertFile" parameterType="fileVo">
+		insert into addfile values('file'||addfile_sq.nextval,#{file_path},#{file_brd})
+	</insert>
+	
+	
+	
+	<!-- 게시판 타입 관련 -->
+	<select id="selectBoardTypeAll" resultType="brdtVo">
+		select * from boardtype
+	</select>
+	
+	<update id="updateboardType" parameterType="brdtVo">
+		update boardtype
+		set brdt_name=#{brdt_name}
+			,brdt_useable=#{brdt_useable}
+		where brdt_id=#{brdt_id}
+	</update>
+	
+	<insert id="insertBoardType" parameterType="brdtVo">
+		insert into boardtype values('brdt'||boardtype_sq.nextval,#{brdt_name},1,#{brdt_user},sysdate)
+	</insert>
+	
+	
+	
+	<!-- 유저관련 -->
+	<select id="selectUser" parameterType="String" resultType="userVo">
+		select * from jspuser where userId=#{userId}
+	
+	</select>
+	
+  
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
